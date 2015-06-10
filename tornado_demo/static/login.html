@@ -2,6 +2,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
 	<title>极验行为式验证 tornado 类网站安装测试页面</title>
+	<script src="/static/js/jquery.min.js"></script>
 </head>
 <body>
 	<style type="text/css">
@@ -38,6 +39,33 @@
 			font-size: 14px;	
 			color: #FFFFF0;	
 		}
+		.mes-button {
+			display: inline-block;
+			width: 100px;
+			height: 35px;
+			line-height: 1em;
+			margin-left: 10px;
+			margin-top: 0;
+		}
+		.mes-input {
+			width: 170px;
+			margin-top: 0;	
+		}
+		.mes-box {
+			margin: 10px auto;
+		}
+		.red {
+			color: red;
+			display: none;
+		}
+		.green {
+			color: green; 
+			display: none;
+		}
+		.mes-red {
+			color: red;
+			display: none;
+		}
 	</style>
 
 	<div class="container">
@@ -48,19 +76,66 @@
 			<form method="post" action="/">
 				<div class="box">
 					<label>手机：</label>
-					<input type="text" name="phone" value=""/>
+					<input type="text" name="phone" id="phone"/>
 				</div>
 				<div class="box">
 					<label>密码：</label>
 					<input type="password" name="password" value="geetest"/>
 				</div>
                 <div class="box">
-                    <script type="text/javascript" src="{{url}}"></script>
+                    <script async type="text/javascript"
+				        src="http://api.geetest.com/get.php?gt=a40fd3b0d712165c5d13e6f747e948d4&product=embed">
+					</script>
                 </div>
+                <div class="box mes-box">
+					<label>短信验证码：</label><br/>
+                </div>
+                <div class="box mes-box">
+					<input type="text" class="mes-input" name="message" value=""/>
+					<button type="button" class="mes-button" onClick="getMse()">获取验证码</button>
+				</div>
+				<div class="box red">
+					短信验证发送失败
+				</div>
+				<div class="box green">
+					短信验证发送成功
+				</div>
+				<div class="box mes-red">
+					滑动验证未通过
+				</div>
 				<div class="box">
 					<button id="submit-button">提交</button>
 				</div>
 			</form>
+			<script type="text/javascript">
+				function getMse(){
+						var phone = $("#phone").val();
+						var geetest_challenge = $("input[name='geetest_challenge']").val();
+						var geetest_validate = $("input[name='geetest_validate']").val();
+						var geetest_seccode = $("input[name='geetest_seccode']").val();
+						var data = {
+							phone: phone,
+							geetest_challenge: geetest_challenge,
+							geetest_validate: geetest_validate,
+							geetest_seccode: geetest_seccode
+						}
+					    $.post("/api/submit", data, function(result){
+					    	if(result==1){
+					    		$(".green").show();
+					    		$(".red").hide();
+					    		$(".red").hide();
+					    	}else if(result==-6){
+					    		$(".mes-red").show();
+					    		$(".red").hide();
+					    		$(".green").hide();
+					    	}else{
+					    		$(".red").show();
+					    		$(".mes-red").hide();
+					    		$(".green").hide();
+					    	}
+				  });
+				}
+			</script>
 		</div>
 	</div>
 </body>

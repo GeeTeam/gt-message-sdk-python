@@ -7,7 +7,7 @@ import json
 
 class geetest(object):
     """docstring for gt"""
-    API_SERVER = "http://192.168.1.213:8888/"
+    API_SERVER = "http://messageapi.geetest.com/"
     SEND = "send"
     VALIDATE = "validate"
 
@@ -18,6 +18,7 @@ class geetest(object):
 
     def send_request(self, challenge, validate, seccode, phone):
         apiserver = self.API_SERVER + self.SEND
+        print apiserver
         if validate == self.md5value(self.PRIVATE_KEY + 'geetest' + challenge):
             data = {
                 "seccode": seccode,

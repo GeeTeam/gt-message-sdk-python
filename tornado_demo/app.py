@@ -1,4 +1,5 @@
 # coding:utf-8
+import os
 import tornado.ioloop
 import tornado.web
 import tornado.gen
@@ -11,43 +12,28 @@ captcha_id = "a40fd3b0d712165c5d13e6f747e948d4"
 private_key = "0f1a37e33c9ed10dd2e133fe2ae9c459"
 product = "embed"
 
-# 弹出式
-# product = "popup&popupbtnid=submit-button"
 
 class MainHandler(tornado.web.RequestHandler):
-    def get(self):
-        gt = geetestmsg.geetest(captcha_id, private_key)
-        url = ""
-        httpsurl = ""
-        try:
-            challenge = gt.geetest_register()
-        except:
-            challenge = ""
-        if len(challenge) == 32:
-            url = "http://%s%s&challenge=%s&product=%s" % (BASE_URL, captcha_id, challenge, product)
-            httpsurl = "https://%s%s&challenge=%s&product=%s" % (BASE_URL, captcha_id, challenge, product)
-        self.render("static/login.html", url=url)
+    def get(self, *args, **kwargs):
+        self.render("static/login.html")
 
-    def post(self):
-        username = self.get_argument("email")
-        password = self.get_argument("password")
+    def post(self, *args, **kwargs):
+        phone = self.get_argument("phone")
         challenge = self.get_argument("geetest_challenge")
         validate = self.get_argument("geetest_validate")
         seccode = self.get_argument("geetest_seccode")
-        # print challenge
-        # print seccode
-        # print validate
         gt = geetestmsg.geetest(captcha_id, private_key)
-        result = gt.geetest_validate(challenge, validate, seccode)
-        if result:
-            self.write("success")
-        else:
-            self.write("fail")
+        res = gt.send_request(challenge, validate, seccode, phone)
+        self.write(str(res))
+
 
 if __name__ == "__main__":
+    settings = {
+        "static_path": os.path.join(os.path.dirname(__file__), "static")
+    }
     app = tornado.web.Application([
-                                      (r"/", MainHandler),
-                                  ], debug=True)
+                                      (r"(.+)", MainHandler),
+                                  ], debug=True, **settings)
 
-    app.listen(8000)
+    app.listen(8008)
     tornado.ioloop.IOLoop.instance().start()
