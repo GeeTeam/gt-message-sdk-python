@@ -73,7 +73,7 @@
 			极验行为式验证 python 类网站安装测试页面
 		</div>
 		<div class="content">
-			<form method="post" action="/">
+			<form method="post" action="/validate">
 				<div class="box">
 					<label>手机：</label>
 					<input type="text" name="phone" id="phone"/>
@@ -83,7 +83,7 @@
 					<input type="password" name="password" value="geetest"/>
 				</div>
                 <div class="box">
-                    <script async type="text/javascript"
+					<script async type="text/javascript"
 				        src="http://api.geetest.com/get.php?gt=a40fd3b0d712165c5d13e6f747e948d4&product=embed">
 					</script>
                 </div>
@@ -91,7 +91,7 @@
 					<label>短信验证码：</label><br/>
                 </div>
                 <div class="box mes-box">
-					<input type="text" class="mes-input" name="message" value=""/>
+					<input type="text" class="mes-input" name="code" value=""/>
 					<button type="button" class="mes-button" onClick="getMse()">获取验证码</button>
 				</div>
 				<div class="box red">
@@ -119,11 +119,11 @@
 							geetest_validate: geetest_validate,
 							geetest_seccode: geetest_seccode
 						}
-					    $.post("/api/submit", data, function(result){
+					    $.post("/send", data, function(result){
 					    	if(result==1){
 					    		$(".green").show();
 					    		$(".red").hide();
-					    		$(".red").hide();
+					    		$(".mes-red").hide();
 					    	}else if(result==-6){
 					    		$(".mes-red").show();
 					    		$(".red").hide();
